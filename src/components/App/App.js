@@ -8,27 +8,24 @@ import NewTasks from '../NewTasks/NewTasks';
 class App extends React.Component{
 
     state = { todoData : [
-            {label: 'Drink Coffee', important: false, id: 1},
-            {label: 'Make Awesome App', important: true, id: 2},
-            {label: 'Have a lunch', important: false, id: 3},
+
         ]
     };
 
-    addItem = (text) => {
-        //generate id
-        //const lastItem = this.state.todoData.pop();
-       // const newId = Object.assign({}, lastItem).id;
-//console.log(newId);
-        let newId = 50;
-        const newItem = {
-            label: text,
-            important: false,
-            id: (this,newId + 1)
-        };
 
+
+    addItem = (text) => {
         this.setState(({todoData}) =>{
+            const lastItem = todoData[todoData.length - 1];
+            const newId = lastItem.id + 1;
+
             return {
-                todoData: todoData.concat(newItem)
+                todoData: todoData.concat({
+                    label: text,
+                    important: false,
+                    done: false,
+                    id: newId
+                })
             };
         });
     };
@@ -44,6 +41,15 @@ class App extends React.Component{
       });
     };
 
+    onToggleImportant = (id) => {
+        console.log('Toggle Important', id);
+    };
+
+    onToggleDone = (id) => {
+        console.log('Toggle Done ', id);
+    };
+
+
     render() {
 
         return (
@@ -52,7 +58,9 @@ class App extends React.Component{
                 <SearchPanel />
                 <TodoList
                     todos={this.state.todoData}
-                    onDeleted={ this.deleteItem}/>
+                    onDeleted={ this.deleteItem}
+                    onToggleImportant={this.onToggleImportant}
+                    onToggleDone={this.onToggleDone}/>
                 <NewTasks onAdded={this.addItem}/>
             </div>
         );
