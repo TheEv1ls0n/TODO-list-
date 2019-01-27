@@ -5,15 +5,16 @@ import './TodoList-Item.css';
 class TodoListItem extends Component {
 
     render(){
-        const { label, onDeleted, onToggleImportant, onToggleDone, important, done} = this.props;
+        const { label, onDeleted, onToggleImportant, onToggleDone} = this.props;
 
-        let classNames = 'todo-list-item';
-        if ({done}) {
-            classNames += ' done';
-        }
-        if ({important}) {
-            classNames += ' important';
-        }
+            let classNames = 'todo-list-item';
+            if (this.state.todoData.done) {
+                classNames += ' done';
+            }
+            if (this.state.todoData.important) {
+                classNames += ' important';
+            }
+
         return (
             <span className= { classNames }>
                 <span
