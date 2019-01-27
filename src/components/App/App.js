@@ -1,19 +1,19 @@
 import React from 'react';
 
-import SearchPanel from '../SearchPanel/SearchPanel';
 import AppHeader from '../AppHeader/AppHeader';
 import TodoList from '../TodoList/TodoList';
 import NewTasks from '../NewTasks/NewTasks';
 
-class App extends React.Component{
+class App extends React.Component {
 
-    state = { todoData : []
+    state = {
+        todoData: []
     };
 
     addItem = (text) => {
-        this.setState(({todoData}) =>{
+        this.setState(({todoData}) => {
             const lastItem = todoData[todoData.length - 1];
-            const newId = lastItem  ? lastItem.id : 0;
+            const newId = lastItem ? lastItem.id : 0;
 
             return {
                 todoData: todoData.concat({
@@ -26,18 +26,18 @@ class App extends React.Component{
         });
     };
     deleteItem = (id) => {
-      this.setState(({todoData}) => {
+        this.setState(({todoData}) => {
 
-          const idx = todoData.findIndex((el) => el.id === id);
+            const idx = todoData.findIndex((el) => el.id === id);
 
-          const newArray = [...todoData.slice(0, idx), ...todoData.slice(idx + 1)];
-          return {
-              todoData : newArray
-          };
-      });
+            const newArray = [...todoData.slice(0, idx), ...todoData.slice(idx + 1)];
+            return {
+                todoData: newArray
+            };
+        });
     };
 
-    toggleProperty(arr, id, propName){
+    toggleProperty(arr, id, propName) {
         const idx = arr.findIndex((el) => el.id === id);
 
         const oldItem = arr[idx];
@@ -60,7 +60,7 @@ class App extends React.Component{
     onToggleDone = (id) => {
         this.setState(({todoData}) => {
             return {
-                todoData : this.toggleProperty(todoData, id, 'done')
+                todoData: this.toggleProperty(todoData, id, 'done')
             };
         });
     };
@@ -70,14 +70,18 @@ class App extends React.Component{
         const {todoData} = this.state;
         const doneCount = todoData.filter((el) => el.done).length;
         const todoCount = todoData.length - doneCount;
-
+        let showingDoneTasks = false;
+        const doneItem = (showingDoneTasks) => !showingDoneTasks;
+        console.log(showingDoneTasks);
         return (
             <div>
-                <AppHeader toDo = {todoCount} done = {doneCount}/>
-                <SearchPanel />
+                <AppHeader
+                    toDoCount={todoCount}
+                    doneCount={doneCount}
+                    doneItem={doneItem}/>
                 <TodoList
                     todos={todoData}
-                    onDeleted={ this.deleteItem}
+                    onDeleted={this.deleteItem}
                     onToggleImportant={this.onToggleImportant}
                     onToggleDone={this.onToggleDone}/>
                 <NewTasks onAdded={this.addItem}/>

@@ -2,19 +2,38 @@ import React from 'react';
 
 import './NewTasks.css';
 
-export default class NewTasks extends React.Component{
+export default class NewTasks extends React.Component {
+    state = {
+        label:''
+    };
+    onLabelChange = (e) =>{
+        this.setState({
+            label: e.target.value
+        });
+    };
 
+    onSubmit = (e) => {
+        e.preventDefault();
+        this.props.onAdded(this.state.label);
+        this.setState({
+            label: ''
+        });
+    };
     render() {
-        const {onAdded} = this.props;
 
-        return(
-            <div className="new-tasks">
+        return (
+            <form className="new-tasks d-flex"
+                onSubmit={this.onSubmit}>
+                <input type="text"
+                       className="form-control"
+                       onChange={this.onLabelChange}
+                       placeholder=" Type new task"
+                        value={this.state.label}/>
                 <button
-                    className="btn btn-outline-secondary"
-                    onClick={() => onAdded('Hello World')}>
+                    className="btn btn-outline-secondary">
                     Add New
                 </button>
-            </div>
+            </form>
         );
     };
 }

@@ -1,4 +1,8 @@
-
+.todo-list-item{
+    display: flex;
+    justify-content: space-between;
+    width: 40%;
+}
 
 .todo-list-item-label {
     margin-left: 1.25rem;

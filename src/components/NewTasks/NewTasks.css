@@ -1,3 +1,7 @@
 .new-tasks{
     margin-top: 10px;
 }
+
+.new-tasks input{
+    width: 40%;
+}
