@@ -7,7 +7,9 @@ import NewTasks from '../NewTasks/NewTasks';
 class App extends React.Component {
 
     state = {
-        todoData: []
+        todoData: [],
+        term: '',
+        filter: 'all'
     };
 
     addItem = (text) => {
@@ -65,22 +67,54 @@ class App extends React.Component {
         });
     };
 
+    onSearchChange = (term) => {
+        this.setState({term});
+    };
+
+    onFilterChange = (filter) => {
+        this.setState({filter});
+    };
+        search(items, term){
+        if (term.length === 0){
+            return items;
+        }
+
+        return items.filter((item) => {
+            return item.label.toLowerCase()
+                .indexOf(term.toLowerCase()) > -1;
+        });
+    }
+
+    filter(items, filter) {
+
+        switch (filter) {
+            case 'all':
+                return items;
+            case 'active':
+                return items.filter((item) => !item.done);
+            case  'done':
+                return items.filter((item) => item.done);
+            default:
+                return items;
+        }
+    }
 
     render() {
-        const {todoData} = this.state;
+        const {todoData,term, filter} = this.state;
+
+        const visibleItems = this.filter(this.search(todoData, term), filter);
         const doneCount = todoData.filter((el) => el.done).length;
         const todoCount = todoData.length - doneCount;
-        let showingDoneTasks = false;
-        const doneItem = (showingDoneTasks) => !showingDoneTasks;
-        console.log(showingDoneTasks);
         return (
             <div>
                 <AppHeader
                     toDoCount={todoCount}
                     doneCount={doneCount}
-                    doneItem={doneItem}/>
+                    onSearchChange = {this.onSearchChange}
+                    filter={filter}
+                    onFilterChange={this.onFilterChange}/>
                 <TodoList
-                    todos={todoData}
+                    todos={visibleItems}
                     onDeleted={this.deleteItem}
                     onToggleImportant={this.onToggleImportant}
                     onToggleDone={this.onToggleDone}/>
