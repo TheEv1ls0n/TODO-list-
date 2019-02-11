@@ -1,8 +1,10 @@
 import React from 'react';
+import './App.css';
 
 import AppHeader from '../AppHeader/AppHeader';
 import TodoList from '../TodoList/TodoList';
 import NewTasks from '../NewTasks/NewTasks';
+import SaveLocalStorage from  '../saveLocalStorage/saveLocalStorage';
 
 class App extends React.Component {
 
@@ -12,22 +14,36 @@ class App extends React.Component {
         filter: 'all'
     };
 
-    addItem = (text) => {
-        this.setState(({todoData}) => {
-            const lastItem = todoData[todoData.length - 1];
-            const newId = lastItem ? lastItem.id : 0;
+    saveTodoDataLocalStorage = () =>
+            localStorage.setItem("todoList", JSON.stringify(this.state.todoData));
 
-            return {
-                todoData: todoData.concat({
-                    label: text,
-                    important: false,
-                    done: false,
-                    id: newId + 1
-                })
-            };
-        });
+    updatesLocalStorage = () => {
+        if(this.state === undefined){
+            setTimeout(this.saveTodoDataLocalStorage(), 1000) ;
+        }else{
+            this.saveTodoDataLocalStorage();
+        }
     };
+
+
+        addItem = (text) => {
+            this.setState(({todoData}) => {
+                const lastItem = todoData[todoData.length - 1];
+                const newId = lastItem ? lastItem.id : 0;
+                return {
+
+                    todoData: todoData.concat({
+                        label: text,
+                        important: false,
+                        done: false,
+                        id: newId + 1
+                    })
+                };
+            });
+        };
+
     deleteItem = (id) => {
+
         this.setState(({todoData}) => {
 
             const idx = todoData.findIndex((el) => el.id === id);
@@ -37,6 +53,8 @@ class App extends React.Component {
                 todoData: newArray
             };
         });
+
+        this.updatesLocalStorage();
     };
 
     toggleProperty(arr, id, propName) {
@@ -52,6 +70,7 @@ class App extends React.Component {
 
 
     onToggleImportant = (id) => {
+
         this.setState(({todoData}) => {
             return {
                 todoData: this.toggleProperty(todoData, id, 'important')
@@ -60,6 +79,7 @@ class App extends React.Component {
     };
 
     onToggleDone = (id) => {
+
         this.setState(({todoData}) => {
             return {
                 todoData: this.toggleProperty(todoData, id, 'done')
@@ -99,14 +119,26 @@ class App extends React.Component {
         }
     }
 
+
+
+   componentDidMount() {
+             this.setState(({todoData}) => {
+                 const returnObj = JSON.parse(localStorage.getItem("todoList"));
+                console.log(returnObj);
+                 return{
+                     todoData: Array.from(returnObj)
+                 };
+                 });
+     }
+
+
     render() {
         const {todoData,term, filter} = this.state;
-
         const visibleItems = this.filter(this.search(todoData, term), filter);
         const doneCount = todoData.filter((el) => el.done).length;
         const todoCount = todoData.length - doneCount;
         return (
-            <div>
+            <div className="appWindow col-xl-12 col-lg-12 col-md-12 col-sm-12">
                 <AppHeader
                     toDoCount={todoCount}
                     doneCount={doneCount}
@@ -119,6 +151,7 @@ class App extends React.Component {
                     onToggleImportant={this.onToggleImportant}
                     onToggleDone={this.onToggleDone}/>
                 <NewTasks onAdded={this.addItem}/>
+                <SaveLocalStorage onSaveLocalStorage={this.updatesLocalStorage}/>
             </div>
         );
     }
